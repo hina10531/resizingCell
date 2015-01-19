@@ -16,8 +16,8 @@
             }, options);
             
             // DJ 
-			      // false = resizing is off.
-			      // true = resizing is on.
+ 			// false = resizing is off.
+	      	// true = resizing is on.
             var resizingStatus = false;
 
             // DJ : Set iframe, body area, plain javascript, jQuery object
@@ -32,7 +32,7 @@
             };
             
             // DJ : Resizing hanlder model.
-			      // Set jQuery object to selector and id to id.
+	      	// Set jQuery object to selector and id to id.
             var attachedHandler = {
                 eHandler : {
                     selector    :   undefined,
@@ -46,13 +46,13 @@
 
             // DJ : Selected element
             var selectedElement;			
-			      // DJ : X, Y coordinates.
+	      	// DJ : X, Y coordinates.
             var originalX, originalY;
             
             // DJ : This value is for centered position of resize handlers.
             var leverage = settings.thick / 2;
 			      
-		        // DJ : Function group
+	        // DJ : Function group
             var methods = {
                 // Updating changed value on target elements.
                 fixedValue: function(selectedElement, tableElement) {                    
@@ -105,11 +105,6 @@
                             }
                         };
 
-                        if ( $.getInternetVersion() == "8" ) {
-                            eHandler.attr('unselectable', 'on');
-                            nHandler.attr('unselectable', 'on');
-                        }
-
                         eHandler.appendTo(parentElement.Contents).css('position', 'absolute').css('top', position.top).css('left', position.left + dimension.width - leverage).css('height', dimension.height).css('width', settings.thick).css('cursor', 'e-resize').css('background-color', 'transparent')
                         .mousedown(function(e) {
                             if ( resizingStatus == false ) {
@@ -156,9 +151,9 @@
                     }
                 },
 
-                // DJ : resizing on process.
-        				resizeStart: function(attachedHandler, currentHandler) {
-        					resizingStatus = true;
+            	// DJ : resizing on process.
+				resizeStart: function(attachedHandler, currentHandler) {
+					resizingStatus = true;
                 
                     var table = $(selectedElement.context.offsetParent);
                     var parent = selectedElement.parent();
@@ -247,8 +242,8 @@
                         selected = selectedElement;
                     }
 
-				            // DJ : Invoked if an user is moving cursor while mousedowning.
-				            // This is where the actual calculation for resize is being made.
+		            // DJ : Invoked if an user is moving cursor while mousedowning.
+		            // This is where the actual calculation for resize is being made.
                     $(parentElement.Contents).mousemove(function(e) {
                         parentElement.Contents.attr('contentEditable', false).css('cursor', currentHandler.css('cursor'));
                         
@@ -287,7 +282,7 @@
                         }
                     });
                 
-					          // DJ : Mouse up event.
+		          	// DJ : Mouse up event.
                     parentElement.Contents.mouseup(function(e) {
                         methods.applyChanges();
                         methods.resizeEnd(selectedElement);
@@ -306,7 +301,7 @@
                         methods.applyChanges();
                         methods.resizeEnd(selectedElement);
                     });
-				        },
+		        },
 
                 // DJ : Resize process ends, initializing all.
                 resizeEnd: function(selectedElement) {
