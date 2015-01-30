@@ -179,7 +179,7 @@
                     }
                 },
 
-				// DJ : resizing on process.
+				// DJ : resizing in process.
 				resizeStart: function(attachedHandler, currentHandler) {
 					resizingStatus = true;
                 
@@ -198,18 +198,15 @@
 						nextSelected;
 
                     // DJ : if an user trying to resize vertically
-					// 2015-01-31 commented, will delete this.
-                    //if (currentHandler[0] === attachedHandler.nHandler.selector[0]) {
+					// Delete me !!
+					// 2015.01.31, below code was targeted.
+					//if (currentHandler[0] === attachedHandler.nHandler.selector[0]) {
 					if (currentHandler.is(attachedHandler.nHandler.selector)) {
-                        var rowPos = selectedElement.offset(),
-							height = selectedElement.height(),
-							bottom = rowPos.top + height;
+                        var bottomOld = selectedElement.offset().top + selectedElement.height();
 							
                         table.find(settings.selector).each(function(index, td) {
-                            var rowPos2 = $(td).offset(),
-								height2 = $(td).height(),
-								bottom2 = rowPos2.top + height2;
-                            if ( bottom2 == bottom || (bottom2 + 5 > bottom && bottom2 - 5 < bottom) ){
+                            var bottomNow = $(td).offset().top + $(td).height();
+                            if ( bottomNow == bottomOld || (bottomNow + 5 > bottomOld && bottomNow - 5 < bottomOld) ){
                                 rowTarget[rowIndexing] = td;
                                 rowIndexing++;
                             }
@@ -224,32 +221,28 @@
                         });
                     } else {
                         // DJ : if an user trying to resize horizontally
-                        var colPos = selectedElement.offset(),
-							width = selectedElement[0].clientWidth,
-							right = colPos.left + width;
+                        var rightOld = selectedElement.offset().left + selectedElement[0].clientWidth;
 							
                         table.find('td').each(function(index, td) {
-                            var colPos2 = $(td).offset();
-                            var width2 = td.clientWidth;
-                            var right2 = colPos2.left + width2;
-                            if ( right2 == right || (right2 + 5 > right && right2 - 5 < right) ) {
+                            var rightNow = $(td).offset().left + td.clientWidth;
+                            if ( rightNow == rightOld || (rightNow + 5 > rightOld && rightNow - 5 < rightOld) ) {
                                 resizeTarget[targetIndexing] = td;
                                 targetIndexing++;
+								// Improve me !! 
+								// Try to avoid indexing. Try to find a better, simpler way.
                             }
                         });
 
                         // DJ : Try resizing the right next one
-                        var colPos3 = selectedElement.offset(),
-							width3 = selectedElement[0].clientWidth,
-							right3 = colPos3.left + width3;
+                        var nextRight = selectedElement.offset().left + selectedElement[0].clientWidth;
 							
                         table.find('td').each(function(index, td) {
-                            var colPos4 = $(td).offset(),
-								width4 = td.clientWidth,
-								right4 = colPos4.left + width4;
-                            if ( colPos4.left >= right3 - 10 && colPos4.left <= right3 + 10 ) {
+                            var colPos4 = $(td).offset();
+                            if ( colPos4.left >= nextRight - 10 && colPos4.left <= nextRight + 10 ) {
                                 nextTarget[nextIndexing] = td;
                                 nextIndexing++;
+								// Improve me !! 
+								// Try to avoid indexing. Try to find a better, simpler way.
                             }
                         });
                     }
@@ -265,6 +258,7 @@
 
                     $(nextTarget).each(function(index, td) {
                         var colspan = $(td).attr("data-rsc-colspan") ? true : false;
+						
                         if (!colspan) {
                             nextSelected = $(td);
                             return false;
@@ -279,13 +273,18 @@
 					// DJ : Invoked if cursor is moving, while users are mousedowning.
 					// This is where the actual calculation for the resize is being made.
                     $(parentElement.Contents).mousemove(function(e) {
+						
+						// Improve me !!
+						// If this attributes isn't set to false, the blue-selected area will dominate the table, causing some problems.
+						// But setting to false causes a lost of focus while users are typing.
                         parentElement.Contents.attr('contentEditable', false).css('cursor', currentHandler.css('cursor'));
                         
                         var position = $(selected).offset(),
 							resized,
 							width;
 						
-						// 2015-01-31 commented, will delete this.
+						// Delete me !!
+						// 2015.01.31, below code was targeted.
                         //if ( currentHandler[0] == attachedHandler.eHandler.selector[0] )
 						if ( currentHandler.is(attachedHandler.eHandler.selector[0]) ) {
                             if ( e.pageX <= position.left + settings.thick || e.pageX >= position.left + selected.width() + (nextSelected ? nextSelected.width() : 100) - settings.thick)
@@ -346,17 +345,22 @@
                     resizingStatus = false;
                     selectedElement = undefined;
 					
-                    attachedHandler.eHandler.selector.unbind('mousedown');
-                    attachedHandler.eHandler.selector.unbind('mouseup');
-                    attachedHandler.eHandler.selector.unbind('mouseenter');
-                    attachedHandler.eHandler.selector.unbind('mouseout');
-                    attachedHandler.nHandler.selector.unbind('mousedown');
-                    attachedHandler.nHandler.selector.unbind('mouseup');
-                    attachedHandler.nHandler.selector.unbind('mouseenter');
-                    attachedHandler.nHandler.selector.unbind('mouseout');
-                    attachedHandler.eHandler.selector.remove();
-                    attachedHandler.nHandler.selector.remove();
+                    attachedHandler.eHandler.selector
+						.unbind('mousedown')
+						.unbind('mouseup')
+						.unbind('mouseenter')
+						.unbind('mouseout')
+						.remove()
+					.end();
 					
+                    attachedHandler.nHandler.selector
+						.unbind('mousedown')
+						.unbind('mouseup')
+						.unbind('mouseenter')
+						.unbind('mouseout')
+						.remove()
+					.end();
+										
                     parentElement.Contents.unbind('mousemove');
                     parentElement.Contents.unbind('mouseup');
                 }
